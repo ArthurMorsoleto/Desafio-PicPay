@@ -6,7 +6,7 @@ import org.koin.dsl.module
 object UseCaseModule {
 
     fun provide() = module {
-        single<GetContactsUseCase> { GetContactsUseCaseImpl(get()) }
+        single<GetContactsUseCase> { GetContactsUseCaseImpl(get(), get()) }
         single<UpdateLocalContactsUseCase> { UpdateLocalContactsUseCaseImpl(get()) }
         single<GetLocalContactsUseCase> { GetLocalContactsUseCaseImpl(get()) }
     }

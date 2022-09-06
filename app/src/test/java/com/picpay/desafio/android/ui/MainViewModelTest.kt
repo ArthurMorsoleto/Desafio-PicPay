@@ -23,65 +23,30 @@ class MainViewModelTest {
     }
 
     @Test
-    fun testGetLocalUsersOnSuccess() = runBlockingTest {
+    fun testOnViewReadyOnSuccess() = runBlockingTest {
         MainViewModelTestRobot.apply {
             arrange {
-                mockGetLocalContactsWithSuccess()
-            }
-            act {
-                callGetUsers()
-            }
-            assert {
-                verifyShowUsersViewState()
-            }
-        }
-    }
-
-    @Test
-    fun testGetLocalUsersOnFailure() = runBlockingTest {
-        MainViewModelTestRobot.apply {
-            arrange {
-                mockGetLocalContactsWithFailure()
                 mockGetContactsWithSuccess()
                 mockUpdateLocalContacts()
             }
             act {
-                callGetUsers()
+                callOnViewReady()
             }
             assert {
-                verifyShowUsersViewState()
                 verifyGetAndUpdateContactsCall()
+                verifyShowUsersViewState()
             }
         }
     }
 
     @Test
-    fun testGetUsersOnSuccess() = runBlockingTest {
+    fun testOnViewReadyOnFailure() = runBlockingTest {
         MainViewModelTestRobot.apply {
             arrange {
-                mockGetLocalContactsWithEmptyResponse()
-                mockGetContactsWithSuccess()
-                mockUpdateLocalContacts()
-            }
-            act {
-                callGetUsers()
-            }
-            assert {
-                verifyShowUsersViewState()
-                verifyGetAndUpdateContactsCall()
-            }
-        }
-    }
-
-    @Test
-    fun testGetUsersOnFailure() = runBlockingTest {
-        MainViewModelTestRobot.apply {
-            arrange {
-                mockGetLocalContactsWithEmptyResponse()
                 mockGetContactsWithFailure()
             }
             act {
-                callGetUsers()
+                callOnViewReady()
             }
             assert {
                 verifyErrorViewState()

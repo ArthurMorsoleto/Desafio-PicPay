@@ -66,12 +66,10 @@ class MainActivityTest : KoinTest {
 
 //        MockitoAnnotations.initMocks(this)
 
-
         loadKoinModules(module {
             viewModel {
                 MainViewModel(
                     getContactsUseCase,
-                    getLocalContactsUseCase,
                     updateLocalContactsUseCase
                 )
             }

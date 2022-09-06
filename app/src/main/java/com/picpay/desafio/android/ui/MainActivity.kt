@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         setupUsersList()
         observeViewState()
 
-        viewModel.getStoredUsers()
+        viewModel.onViewReady()
     }
 
     private fun setupUsersList() {

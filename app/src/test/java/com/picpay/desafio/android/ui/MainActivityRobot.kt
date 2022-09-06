@@ -13,10 +13,11 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import com.picpay.desafio.android.R
 import com.picpay.desafio.android.data.model.User
 import com.picpay.desafio.android.data.usecases.GetContactsUseCase
-import com.picpay.desafio.android.data.usecases.GetLocalContactsUseCase
 import com.picpay.desafio.android.data.usecases.UpdateLocalContactsUseCase
 import com.picpay.desafio.android.ui.MainActivityRobot.Assert.RecyclerViewMatchers.atPosition
+import io.mockk.Runs
 import io.mockk.coEvery
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.delay
 import org.hamcrest.CoreMatchers.not
@@ -32,7 +33,6 @@ object MainActivityRobot {
     private lateinit var activity: MainActivity
 
     private val updateLocalContactsUseCase = mockk<UpdateLocalContactsUseCase>()
-    private val getLocalContactsUseCase = mockk<GetLocalContactsUseCase>()
     private val getContactsUseCase = mockk<GetContactsUseCase>()
 
     infix fun arrange(f: Arrange.() -> Unit) = Arrange().apply(f)
@@ -46,7 +46,6 @@ object MainActivityRobot {
             viewModel {
                 MainViewModel(
                     getContactsUseCase,
-                    getLocalContactsUseCase,
                     updateLocalContactsUseCase
                 )
             }
@@ -54,17 +53,26 @@ object MainActivityRobot {
     }
 
     class Arrange {
-
         fun startScreen() {
+            mockContactsList()
+            initActivityScenario()
+        }
+
+        fun startScreenWithLoading() {
+            mockContactsListForLoading()
+            initActivityScenario()
+        }
+
+        private fun initActivityScenario() {
             scenario = ActivityScenario.launch(MainActivity::class.java)
                 .onActivity {
                     activity = it
                 }
         }
 
-        fun mockContactsList() {
+        private fun mockContactsList() {
             coEvery {
-                getLocalContactsUseCase.invoke()
+                getContactsUseCase.invoke()
             } returns listOf(
                 User(
                     id = 1,
@@ -73,10 +81,13 @@ object MainActivityRobot {
                     img = "image"
                 )
             )
+            coEvery {
+                updateLocalContactsUseCase.invoke(any())
+            } just Runs
         }
 
-        fun mockContactsListForLoading() {
-            coEvery { getLocalContactsUseCase() } coAnswers {
+        private fun mockContactsListForLoading() {
+            coEvery { getContactsUseCase.invoke() } coAnswers {
                 delay(10000)
                 listOf(
                     User(
@@ -93,7 +104,6 @@ object MainActivityRobot {
     class Act
 
     class Assert {
-
         fun checkContactsList() {
             onView(withId(R.id.recyclerView))
                 .check(matches(atPosition(0, hasDescendant(withText("name")))))

@@ -2,9 +2,11 @@ package com.picpay.desafio.android.ui
 
 import android.os.Build
 import com.picpay.desafio.android.TestApplication
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.context.stopKoin
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -17,11 +19,15 @@ class MainActivityTest {
         MainActivityRobot.setup()
     }
 
+    @After
+    fun tearDown() {
+        stopKoin()
+    }
+
     @Test
     fun shouldDisplayContactsList() {
         MainActivityRobot.apply {
             arrange {
-                mockContactsList()
                 startScreen()
             }
             assert {
@@ -35,8 +41,7 @@ class MainActivityTest {
     fun shouldDisplayLoading() {
         MainActivityRobot.apply {
             arrange {
-                mockContactsListForLoading()
-                startScreen()
+                startScreenWithLoading()
             }
             assert {
                 checkLoading()

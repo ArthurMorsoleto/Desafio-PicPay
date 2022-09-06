@@ -7,6 +7,6 @@ import org.koin.dsl.module
 object ViewModelModule {
 
     fun provide() = module {
-        viewModel { MainViewModel(get(), get(), get()) }
+        viewModel { MainViewModel(get(), get()) }
     }
 }

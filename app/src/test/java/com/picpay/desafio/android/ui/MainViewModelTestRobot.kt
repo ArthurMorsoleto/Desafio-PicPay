@@ -2,7 +2,6 @@ package com.picpay.desafio.android.ui
 
 import com.picpay.desafio.android.data.model.User
 import com.picpay.desafio.android.data.usecases.GetContactsUseCase
-import com.picpay.desafio.android.data.usecases.GetLocalContactsUseCase
 import com.picpay.desafio.android.data.usecases.UpdateLocalContactsUseCase
 import com.picpay.desafio.android.getValueForTest
 import io.mockk.*
@@ -12,7 +11,6 @@ object MainViewModelTestRobot {
 
     private lateinit var subject: MainViewModel
 
-    private val getLocalContactsUseCase = mockk<GetLocalContactsUseCase>()
     private val getContactsUseCase = mockk<GetContactsUseCase>()
     private val updateLocalContactsUseCase = mockk<UpdateLocalContactsUseCase>()
 
@@ -35,28 +33,13 @@ object MainViewModelTestRobot {
     fun setup() {
         subject = MainViewModel(
             getContactsUseCase,
-            getLocalContactsUseCase,
             updateLocalContactsUseCase
         )
     }
 
-
     class Arrange {
-
-        fun mockGetLocalContactsWithSuccess() {
-            coEvery { getLocalContactsUseCase() } returns fakeContactsResponse
-        }
-
         fun mockGetContactsWithSuccess() {
             coEvery { getContactsUseCase() } returns fakeContactsResponse
-        }
-
-        fun mockGetLocalContactsWithFailure() {
-            coEvery { getLocalContactsUseCase() } throws fakeErrorResponse
-        }
-
-        fun mockGetLocalContactsWithEmptyResponse() {
-            coEvery { getLocalContactsUseCase() } returns emptyList()
         }
 
         fun mockGetContactsWithFailure() {
@@ -69,14 +52,12 @@ object MainViewModelTestRobot {
     }
 
     class Act {
-
-        fun callGetUsers() {
-            subject.getStoredUsers()
+        fun callOnViewReady() {
+            subject.onViewReady()
         }
     }
 
     class Assert {
-
         fun verifyShowUsersViewState() {
             assertEquals(
                 MainActivityViewState.ShowUsers(fakeContactsResponse),

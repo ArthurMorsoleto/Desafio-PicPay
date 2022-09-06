@@ -1,6 +1,7 @@
 package com.picpay.desafio.android.data.usecases
 
 import com.picpay.desafio.android.data.api.repository.ApiRepository
+import com.picpay.desafio.android.data.local.repository.LocalRepository
 import com.picpay.desafio.android.data.model.User
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -15,6 +16,8 @@ class GetContactsUseCaseTest {
 
     private lateinit var subject: GetContactsUseCase
     private val apiRepository = mockk<ApiRepository>()
+    private val localRepository = mockk<LocalRepository>()
+
     private val response = listOf(
         User(
             id = 1,
@@ -26,16 +29,24 @@ class GetContactsUseCaseTest {
 
     @Before
     fun setup() {
-        subject = GetContactsUseCaseImpl(apiRepository)
+        subject = GetContactsUseCaseImpl(apiRepository, localRepository)
     }
 
     @Test
-    fun testGetUsersFromRepository() {
+    fun testGetUsersFromLocalRepository() {
         runBlockingTest {
-            coEvery { apiRepository.getUsers() } returns response
-
+            coEvery { localRepository.getUsers() } returns response
             val result = subject.invoke()
+            assertEquals(result, response)
+        }
+    }
 
+    @Test
+    fun testGetUsersFromApiRepository() {
+        runBlockingTest {
+            coEvery { localRepository.getUsers() } returns emptyList()
+            coEvery { apiRepository.getUsers() } returns response
+            val result = subject.invoke()
             assertEquals(result, response)
         }
     }

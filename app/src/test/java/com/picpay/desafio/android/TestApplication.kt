@@ -11,11 +11,13 @@ class TestApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         setTheme(R.style.AppTheme)
-        Picasso.setSingletonInstance(Picasso.Builder(this).build())
+        try {
+            Picasso.setSingletonInstance(Picasso.Builder(this).build())
+        } catch (e: Exception) {
+        }
         startKoin {
             androidLogger()
             androidContext(this@TestApplication)
-            modules(listOf())
         }
     }
 }
